@@ -5,11 +5,29 @@
   const COLLAPSED_KEY = 'habitos_sidebar_collapsed';
   const $ = id => document.getElementById(id);
 
+  function greeting(name) {
+    const hour = new Date().getHours();
+    const text = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+    return `${text}, ${name || 'Usuário'}`;
+  }
+
+  function updateGreeting() {
+    const title = $('pageTitle');
+    if (!title) return;
+    let name = 'Usuário';
+    try {
+      const state = JSON.parse(localStorage.getItem(KEY) || 'null');
+      name = state?.user?.name?.trim() || name;
+    } catch (e) {}
+    title.textContent = greeting(name);
+  }
+
   function setOpen(open) {
     const sidebar = $('sidebar'), overlay = $('sidebarOverlay'), menu = $('mobileMenu');
     if (!sidebar) return;
     sidebar.classList.toggle('open', open);
     overlay?.classList.toggle('open', open);
+    overlay?.setAttribute('aria-hidden', open ? 'false' : 'true');
     menu?.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
@@ -55,6 +73,7 @@
     });
 
     applyLayout();
+    updateGreeting();
   }
 
   function applyLayout() {
@@ -70,6 +89,7 @@
       setOpen(false);
       setCollapsed(localStorage.getItem(COLLAPSED_KEY) === '1');
     }
+    updateGreeting();
   }
 
   function addLogoutButton() {
@@ -116,10 +136,12 @@
         if (!name) return;
         await user.updateProfile({ displayName: name });
         await firebase.firestore().collection('users').doc(user.uid).set({ email: user.email, displayName: name, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        updateGreeting();
       } catch (e) { console.warn('Profile:', e); }
     }, 150);
   });
 
   window.addEventListener('resize', applyLayout);
   window.addEventListener('load', () => setTimeout(() => { setupLayout(); addLogoutButton(); }, 250));
+  setInterval(updateGreeting, 60000);
 })();
