@@ -1,0 +1,85 @@
+/* Layout estrutural: barra lateral + área principal + cabeçalho */
+:root{
+  --sidebar-expanded-width:232px;
+  --sidebar-collapsed-width:88px;
+}
+
+html,body{overflow-x:visible;}
+.app-shell{width:100%;min-height:100vh;overflow:visible;}
+
+/* Desktop: a barra lateral define a largura disponível da aplicação. */
+.sidebar{
+  width:var(--sidebar-expanded-width);
+  height:100dvh;
+  position:fixed;
+  inset:0 auto 0 0;
+  overflow:visible;
+  padding:22px 14px;
+  transition:width .22s ease;
+}
+.app-shell.sidebar-collapsed{--sidebar-current-width:var(--sidebar-collapsed-width);}
+.app-shell:not(.sidebar-collapsed){--sidebar-current-width:var(--sidebar-expanded-width);}
+
+.main{
+  width:calc(100% - var(--sidebar-current-width));
+  margin-left:var(--sidebar-current-width);
+  min-width:0;
+  min-height:100vh;
+  transition:width .22s ease,margin-left .22s ease;
+}
+
+/* Menu recolhido: somente os ícones permanecem visíveis. */
+.app-shell.sidebar-collapsed .sidebar{width:var(--sidebar-collapsed-width);padding-left:10px;padding-right:10px;}
+.app-shell.sidebar-collapsed .brand{justify-content:center;padding-left:0;padding-right:0;}
+.app-shell.sidebar-collapsed .brand > div:last-child{display:none;}
+.app-shell.sidebar-collapsed .nav-item{justify-content:center;gap:0;padding-left:10px;padding-right:10px;font-size:0;}
+.app-shell.sidebar-collapsed .nav-item span{font-size:15px;width:24px;}
+.app-shell.sidebar-collapsed .mini-profile{justify-content:center;padding-left:0;padding-right:0;}
+.app-shell.sidebar-collapsed .mini-profile > div:last-child{display:none;}
+
+/* Cabeçalho: botão primeiro, depois somente a saudação. */
+.topbar{width:100%;min-width:0;padding:18px 32px;min-height:82px;}
+.topbar-title{display:flex;align-items:center;gap:14px;min-width:0;flex:1;}
+.topbar-title > .sidebar-collapse{order:0;}
+.topbar-title > div{order:1;}
+.topbar-title .eyebrow{display:none;}
+.topbar-title h1{margin:0;font-size:24px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.top-actions{display:none;}
+
+/* O conteúdo usa toda a largura que sobrou. */
+.content{width:100%;max-width:none;margin:0;padding:32px 40px 60px;min-width:0;}
+.card,.grid,.hero,.dashboard-analytics,.habit-list{min-width:0;max-width:100%;}
+
+/* Abaixo de desktop, o botão de recolher fica oculto. */
+@media (max-width:1023px){
+  .sidebar-collapse{display:none;}
+  .topbar{padding-left:24px;padding-right:24px;}
+  .content{padding-left:24px;padding-right:24px;}
+  .app-shell{--sidebar-current-width:var(--sidebar-collapsed-width);}
+  .app-shell.sidebar-collapsed .sidebar{width:var(--sidebar-collapsed-width);}
+}
+
+/* Tablet: menu compacto fixo e conteúdo recalculado a partir dos 88px. */
+@media (min-width:768px) and (max-width:1023px){
+  .main{margin-left:var(--sidebar-collapsed-width);width:calc(100% - var(--sidebar-collapsed-width));}
+  .sidebar{width:var(--sidebar-collapsed-width);}
+  .sidebar .brand > div:last-child,.sidebar .mini-profile > div:last-child{display:none;}
+  .sidebar .brand,.sidebar .mini-profile{justify-content:center;padding-left:0;padding-right:0;}
+  .sidebar .nav-item{justify-content:center;gap:0;font-size:0;padding-left:10px;padding-right:10px;}
+  .sidebar .nav-item span{font-size:15px;width:24px;}
+}
+
+/* Celular: o menu vira gaveta; o conteúdo ocupa 100% da tela. */
+@media (max-width:767px){
+  .app-shell{--sidebar-current-width:0px;}
+  .main{width:100%;margin-left:0;}
+  .sidebar{width:min(280px,85vw);height:100dvh;position:fixed;inset:0 auto 0 0;padding:20px 14px;transform:translateX(-105%);transition:transform .22s ease;z-index:80;overflow:visible;}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease;z-index:70;}
+  .sidebar-overlay.open{opacity:1;visibility:visible;pointer-events:auto;}
+  .mobile-menu{display:grid;}
+  .topbar{padding:14px 18px;min-height:72px;}
+  .topbar-title{gap:10px;}
+  .topbar-title h1{font-size:20px;}
+  .content{padding:22px 18px 48px;}
+}
