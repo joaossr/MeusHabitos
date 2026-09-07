@@ -3,100 +3,82 @@
   const auth = firebase.auth();
   const KEY = 'habitos_app_v1';
   const COLLAPSED_KEY = 'habitos_sidebar_collapsed';
+  const $ = id => document.getElementById(id);
 
-  const qs = (s, root = document) => root.querySelector(s);
-  const qsa = (s, root = document) => [...root.querySelectorAll(s)];
+  function setOpen(open) {
+    const sidebar = $('sidebar'), overlay = $('sidebarOverlay'), menu = $('mobileMenu');
+    if (!sidebar) return;
+    sidebar.classList.toggle('open', open);
+    overlay?.classList.toggle('open', open);
+    menu?.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function setCollapsed(collapsed) {
+    const shell = $('appShell'), button = $('desktopSidebarToggle');
+    if (!shell || window.innerWidth < 1024) return;
+    shell.classList.toggle('sidebar-collapsed', collapsed);
+    if (button) {
+      button.textContent = collapsed ? '›' : '‹';
+      button.title = collapsed ? 'Expandir menu' : 'Recolher menu';
+      button.setAttribute('aria-label', button.title);
+    }
+    localStorage.setItem(COLLAPSED_KEY, collapsed ? '1' : '0');
+  }
 
   function setupLayout() {
-    const shell = qs('.app-shell');
-    const sidebar = qs('#sidebar');
-    const topbar = qs('.topbar');
-    const menu = qs('#mobileMenu');
-    if (!shell || !sidebar || !topbar) return;
+    const shell = $('appShell'), sidebar = $('sidebar'), overlay = $('sidebarOverlay'), menu = $('mobileMenu'), toggle = $('desktopSidebarToggle');
+    if (!shell || !sidebar) return;
 
-    const titleBlock = topbar.children[1];
-    if (titleBlock) titleBlock.classList.add('topbar-title');
-
-    let toggle = qs('#desktopSidebarToggle');
-    if (!toggle && titleBlock) {
-      toggle = document.createElement('button');
-      toggle.id = 'desktopSidebarToggle';
-      toggle.className = 'sidebar-collapse';
-      toggle.type = 'button';
-      toggle.setAttribute('aria-label', 'Recolher menu');
-      titleBlock.appendChild(toggle);
+    if (toggle && !toggle.dataset.ready) {
+      toggle.dataset.ready = '1';
+      toggle.addEventListener('click', event => {
+        event.preventDefault();
+        if (window.innerWidth >= 1024) setCollapsed(!shell.classList.contains('sidebar-collapsed'));
+      });
     }
-
-    let overlay = qs('#sidebarOverlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'sidebarOverlay';
-      overlay.className = 'sidebar-overlay';
-      shell.appendChild(overlay);
+    if (menu && !menu.dataset.ready) {
+      menu.dataset.ready = '1';
+      menu.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        setOpen(!sidebar.classList.contains('open'));
+      });
     }
-
-    const setCollapsed = collapsed => {
-      shell.classList.toggle('sidebar-collapsed', collapsed);
-      if (toggle) {
-        toggle.textContent = collapsed ? '›' : '‹';
-        toggle.title = collapsed ? 'Expandir menu' : 'Recolher menu';
-        toggle.setAttribute('aria-label', toggle.title);
-      }
-      localStorage.setItem(COLLAPSED_KEY, collapsed ? '1' : '0');
-    };
-
-    const closeMobile = () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('open');
-      menu?.setAttribute('aria-expanded', 'false');
-    };
-
-    const openMobile = () => {
-      sidebar.classList.add('open');
-      overlay.classList.add('open');
-      menu?.setAttribute('aria-expanded', 'true');
-    };
-
-    toggle?.addEventListener('click', e => {
-      e.preventDefault();
-      if (window.innerWidth < 768) return;
-      setCollapsed(!shell.classList.contains('sidebar-collapsed'));
+    if (overlay && !overlay.dataset.ready) {
+      overlay.dataset.ready = '1';
+      overlay.addEventListener('click', () => setOpen(false));
+    }
+    sidebar.querySelectorAll('.nav-item').forEach(item => {
+      if (item.dataset.drawerReady) return;
+      item.dataset.drawerReady = '1';
+      item.addEventListener('click', () => { if (window.innerWidth < 768) setOpen(false); });
     });
 
-    menu?.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      sidebar.classList.contains('open') ? closeMobile() : openMobile();
-    });
+    applyLayout();
+  }
 
-    overlay.addEventListener('click', closeMobile);
-    qsa('.nav-item', sidebar).forEach(item => item.addEventListener('click', () => {
-      if (window.innerWidth < 768) closeMobile();
-    }));
-
-    window.addEventListener('resize', () => {
-      if (window.innerWidth >= 768) {
-        closeMobile();
-        setCollapsed(localStorage.getItem(COLLAPSED_KEY) === '1');
-      } else {
-        shell.classList.remove('sidebar-collapsed');
-      }
-    });
-
-    if (window.innerWidth >= 768) setCollapsed(localStorage.getItem(COLLAPSED_KEY) === '1');
-    else shell.classList.remove('sidebar-collapsed');
+  function applyLayout() {
+    const shell = $('appShell');
+    if (!shell) return;
+    if (window.innerWidth < 768) {
+      shell.classList.remove('sidebar-collapsed');
+      setOpen(false);
+    } else if (window.innerWidth < 1024) {
+      setOpen(false);
+      shell.classList.add('sidebar-collapsed');
+    } else {
+      setOpen(false);
+      setCollapsed(localStorage.getItem(COLLAPSED_KEY) === '1');
+    }
   }
 
   function addLogoutButton() {
-    if (qs('#logoutBtn')) return;
-    const bottom = qs('.sidebar-bottom');
+    if ($('logoutBtn')) return;
+    const bottom = document.querySelector('.sidebar-bottom');
     if (!bottom) return;
     const btn = document.createElement('button');
-    btn.id = 'logoutBtn';
-    btn.className = 'nav-item logout-item';
-    btn.type = 'button';
-    btn.innerHTML = '<span>↪</span> Sair';
-    btn.title = 'Sair da conta';
+    btn.id = 'logoutBtn'; btn.className = 'nav-item logout-item'; btn.type = 'button';
+    btn.innerHTML = '<span>↪</span> Sair'; btn.title = 'Sair da conta';
     btn.addEventListener('click', async () => {
       if (!confirm('Deseja sair da sua conta?')) return;
       try { await auth.signOut(); } catch (e) { console.error(e); }
@@ -119,13 +101,10 @@
   auth.onAuthStateChanged(user => {
     if (!user) return;
     syncLocalName(user);
-    setTimeout(() => {
-      setupLayout();
-      addLogoutButton();
-    }, 100);
+    setTimeout(() => { setupLayout(); addLogoutButton(); }, 100);
   });
 
-  document.addEventListener('click', async event => {
+  document.addEventListener('click', event => {
     const btn = event.target.closest('[data-action="save-settings"]');
     if (!btn) return;
     setTimeout(async () => {
@@ -136,17 +115,11 @@
         const name = state?.user?.name?.trim();
         if (!name) return;
         await user.updateProfile({ displayName: name });
-        await firebase.firestore().collection('users').doc(user.uid).set({
-          email: user.email,
-          displayName: name,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        await firebase.firestore().collection('users').doc(user.uid).set({ email: user.email, displayName: name, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
       } catch (e) { console.warn('Profile:', e); }
     }, 150);
   });
 
-  window.addEventListener('load', () => setTimeout(() => {
-    setupLayout();
-    addLogoutButton();
-  }, 250));
+  window.addEventListener('resize', applyLayout);
+  window.addEventListener('load', () => setTimeout(() => { setupLayout(); addLogoutButton(); }, 250));
 })();
