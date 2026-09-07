@@ -8,38 +8,42 @@
     const style = document.createElement('style');
     style.id = 'sidebarEnhancementStyles';
     style.textContent = `
-      /* Sidebar recolhível */
+      /* Sidebar desktop recolhível */
       .sidebar{transition:width .22s ease,transform .22s ease;overflow:hidden}
-      .sidebar-collapse{position:absolute;top:20px;right:10px;width:30px;height:30px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);border-radius:8px;display:grid;place-items:center;padding:0;font-size:14px;z-index:2}
+      .sidebar-collapse{position:absolute;top:22px;right:10px;width:28px;height:28px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);border-radius:8px;display:grid;place-items:center;padding:0;font-size:18px;line-height:1;z-index:5}
       .sidebar-collapse:hover{background:var(--surface-3);color:var(--text)}
       .sidebar.collapsed{width:76px;padding-left:10px;padding-right:10px}
       .sidebar.collapsed .brand{justify-content:center;padding-left:0;padding-right:0}
-      .sidebar.collapsed .brand>div:last-child,
-      .sidebar.collapsed .nav-item:not(.sidebar-collapse) { }
-      .sidebar.collapsed .nav-item{justify-content:center;padding-left:10px;padding-right:10px;gap:0}
-      .sidebar.collapsed .nav-item span{margin:0;width:24px}
-      .sidebar.collapsed .nav-item{font-size:0}
-      .sidebar.collapsed .nav-item span{font-size:15px}
+      .sidebar.collapsed .brand > div:last-child{display:none}
+      .sidebar.collapsed .nav-item{justify-content:center;padding-left:10px;padding-right:10px;gap:0;font-size:0}
+      .sidebar.collapsed .nav-item span{width:24px;margin:0;font-size:15px}
       .sidebar.collapsed .mini-profile{justify-content:center;padding-left:0;padding-right:0}
-      .sidebar.collapsed .mini-profile>div:last-child{display:none}
-      .sidebar.collapsed .sidebar-collapse{right:23px;top:58px}
+      .sidebar.collapsed .mini-profile > div:last-child{display:none}
+      .sidebar.collapsed .sidebar-collapse{right:24px;top:58px}
       .sidebar.collapsed .brand{padding-bottom:56px}
       .sidebar.collapsed + .main{margin-left:76px;width:calc(100% - 76px)}
-      .logout-item{margin-top:6px!important;color:var(--muted)!important;padding-top:9px!important;padding-bottom:9px!important}
+
+      /* Sair discreto, como em apps modernos */
+      .logout-item{margin-top:4px!important;color:var(--muted)!important;padding:8px 12px!important;font-size:12px!important}
       .logout-item:hover{color:var(--danger)!important;background:rgba(240,106,122,.08)!important}
+      .sidebar.collapsed .logout-item{font-size:0!important}
+
       .sidebar-overlay{display:none}
+
       @media(max-width:720px){
-        .sidebar{width:244px;box-shadow:12px 0 40px rgba(0,0,0,.35)}
+        .sidebar{width:244px;box-shadow:12px 0 40px rgba(0,0,0,.35);transform:translateX(-100%);z-index:40}
+        .sidebar.open{transform:translateX(0)}
         .sidebar.collapsed{width:244px;padding-left:14px;padding-right:14px}
-        .sidebar.collapsed .brand{justify-content:flex-start;padding-left:10px;padding-right:10px;padding-bottom:26px}
-        .sidebar.collapsed .brand>div:last-child,
-        .sidebar.collapsed .mini-profile>div:last-child{display:block}
+        .sidebar.collapsed .brand{justify-content:flex-start;padding:4px 10px 26px}
+        .sidebar.collapsed .brand > div:last-child{display:block}
         .sidebar.collapsed .nav-item{justify-content:flex-start;padding:11px 12px;gap:12px;font-size:inherit}
-        .sidebar.collapsed .nav-item span{font-size:inherit;width:18px}
-        .sidebar.collapsed .sidebar-collapse{right:10px;top:20px}
-        .sidebar.collapsed .brand{padding-bottom:26px}
-        .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:25;display:block;opacity:0;pointer-events:none;transition:opacity .2s ease}
+        .sidebar.collapsed .nav-item span{width:18px;font-size:inherit}
+        .sidebar.collapsed .mini-profile{justify-content:flex-start;padding:8px 10px 13px}
+        .sidebar.collapsed .mini-profile > div:last-child{display:block}
+        .sidebar-collapse{display:none}
+        .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:35;display:block;opacity:0;pointer-events:none;transition:opacity .2s ease}
         .sidebar.open + .sidebar-overlay{opacity:1;pointer-events:auto}
+        .main{margin-left:0!important;width:100%!important}
       }
     `;
     document.head.appendChild(style);
@@ -59,6 +63,7 @@
       btn.setAttribute('aria-label', 'Recolher menu');
       btn.textContent = '‹';
       btn.addEventListener('click', () => {
+        if (window.innerWidth <= 720) return;
         const collapsed = sidebar.classList.toggle('collapsed');
         btn.textContent = collapsed ? '›' : '‹';
         btn.title = collapsed ? 'Expandir menu' : 'Recolher menu';
@@ -79,8 +84,10 @@
     if (window.innerWidth > 720 && localStorage.getItem('habitos_sidebar_collapsed') === '1') {
       sidebar.classList.add('collapsed');
       const btn = document.getElementById('sidebarCollapse');
-      btn.textContent = '›';
-      btn.title = 'Expandir menu';
+      if (btn) {
+        btn.textContent = '›';
+        btn.title = 'Expandir menu';
+      }
     }
   }
 
@@ -90,6 +97,20 @@
     if (!menu || !sidebar || menu.dataset.sidebarReady) return;
     menu.dataset.sidebarReady = '1';
     menu.addEventListener('click', () => sidebar.classList.toggle('open'));
+  }
+
+  function setupResponsiveSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    const apply = () => {
+      if (window.innerWidth <= 720) {
+        sidebar.classList.remove('collapsed');
+      } else if (localStorage.getItem('habitos_sidebar_collapsed') === '1') {
+        sidebar.classList.add('collapsed');
+      }
+    };
+    window.addEventListener('resize', apply);
+    apply();
   }
 
   function addLogoutButton() {
@@ -127,6 +148,7 @@
       setTimeout(() => {
         addSidebarControls();
         setupMobileMenu();
+        setupResponsiveSidebar();
         addLogoutButton();
       }, 100);
     }
@@ -157,6 +179,7 @@
   window.addEventListener('load', () => setTimeout(() => {
     addSidebarControls();
     setupMobileMenu();
+    setupResponsiveSidebar();
     addLogoutButton();
   }, 300));
 })();
