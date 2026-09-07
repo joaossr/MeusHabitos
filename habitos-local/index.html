@@ -6,13 +6,13 @@
   <title>Hábitos — Sistema Gamificado</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="shortcut icon" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css?v=20260907-4">
+  <link rel="stylesheet" href="styles.css?v=20260907-6">
   <link rel="stylesheet" href="planner-reports.css?v=20260907-2">
   <link rel="stylesheet" href="loja.css?v=20260907-2">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
       <div class="brand"><div class="brand-mark">H</div><div><strong>Hábitos</strong><span>Seu sistema pessoal</span></div></div>
       <nav class="nav">
         <button class="nav-item active" data-page="today"><span>⌂</span> Hoje</button>
@@ -27,8 +27,13 @@
       </nav>
       <div class="sidebar-bottom"><div class="mini-profile"><div class="avatar" id="sideAvatar">JP</div><div><strong id="sideName">Usuário</strong><span id="sideLevel">Nível 1</span></div></div><button class="nav-item" data-page="settings"><span>⚙</span> Configurações</button></div>
     </aside>
-    <main class="main">
-      <header class="topbar"><button class="icon-btn mobile-menu" id="mobileMenu" type="button" aria-label="Abrir menu" aria-expanded="false">☰</button><div><div class="eyebrow" id="periodLabel">08/09/2026 — 31/12/2026</div><h1 id="pageTitle">Hoje</h1></div><div class="top-actions"><button class="ghost-btn" id="quickAdd">+ Adicionar</button><div class="top-avatar avatar" id="topAvatar">JP</div></div></header>
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+    <main class="main" id="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-menu" id="mobileMenu" type="button" aria-label="Abrir menu" aria-expanded="false">☰</button>
+        <div class="topbar-title"><div><div class="eyebrow" id="periodLabel">08/09/2026 — 31/12/2026</div><h1 id="pageTitle">Hoje</h1></div><button class="sidebar-collapse" id="desktopSidebarToggle" type="button" aria-label="Recolher menu" title="Recolher menu">‹</button></div>
+        <div class="top-actions"><button class="ghost-btn" id="quickAdd">+ Adicionar</button><div class="top-avatar avatar" id="topAvatar">JP</div></div>
+      </header>
       <section class="content" id="content"></section>
     </main>
   </div>
@@ -37,8 +42,8 @@
   <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js?v=20260907-3"></script>
-  <script src="auth.js?v=20260907-6"></script>
+  <script src="firebase-config.js?v=20260907-4"></script>
+  <script src="auth.js?v=20260907-7"></script>
   <script src="firebase-sync.js?v=20260907-2"></script>
   <script src="app.js?v=20260907-4"></script>
   <script src="planner-reports.js?v=20260907-3"></script>
