@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hábitos — Sistema Gamificado</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">H</div>
+        <div>
+          <strong>Hábitos</strong>
+          <span>Seu sistema pessoal</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-page="today"><span>⌂</span> Hoje</button>
+        <button class="nav-item" data-page="habits"><span>✓</span> Hábitos</button>
+        <button class="nav-item" data-page="goals"><span>◎</span> Metas</button>
+        <button class="nav-item" data-page="calendar"><span>▦</span> Calendário</button>
+        <button class="nav-item" data-page="stats"><span>▥</span> Estatísticas</button>
+        <button class="nav-item" data-page="achievements"><span>♛</span> Conquistas</button>
+        <button class="nav-item" data-page="missions"><span>◆</span> Missões</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="mini-profile">
+          <div class="avatar" id="sideAvatar">JP</div>
+          <div>
+            <strong id="sideName">Usuário</strong>
+            <span id="sideLevel">Nível 1</span>
+          </div>
+        </div>
+        <button class="nav-item" data-page="settings"><span>⚙</span> Configurações</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-menu" id="mobileMenu">☰</button>
+        <div>
+          <div class="eyebrow" id="periodLabel">08/09/2026 — 31/12/2026</div>
+          <h1 id="pageTitle">Hoje</h1>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="quickAdd">+ Adicionar</button>
+          <div class="top-avatar avatar" id="topAvatar">JP</div>
+        </div>
+      </header>
+
+      <section class="content" id="content"></section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+    <div class="modal" id="modal"></div>
+  </div>
+  <div class="toast-stack" id="toastStack"></div>
+
+  <!-- Firebase: preencha firebase-config.js para ativar login/sincronização online. -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-sync.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
