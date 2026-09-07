@@ -37,14 +37,16 @@ html,body{overflow-x:visible;}
 .app-shell.sidebar-collapsed .mini-profile{justify-content:center;padding-left:0;padding-right:0;}
 .app-shell.sidebar-collapsed .mini-profile > div:last-child{display:none;}
 
-/* Cabeçalho: botão primeiro, depois somente a saudação. */
+/* Cabeçalho: botão de recuo antes da saudação. */
 .topbar{width:100%;min-width:0;padding:18px 32px;min-height:82px;}
 .topbar-title{display:flex;align-items:center;gap:14px;min-width:0;flex:1;}
 .topbar-title > .sidebar-collapse{order:0;}
-.topbar-title > div{order:1;}
-.topbar-title .eyebrow{display:none;}
-.topbar-title h1{margin:0;font-size:24px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.top-actions{display:none;}
+.page-heading{order:1;min-width:0;}
+.page-heading #periodLabel,.page-heading #pageTitle{display:none;}
+.page-heading #greeting{display:block;margin:0;font-size:24px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Mantém os controles existentes do sistema. */
+.top-actions{display:flex;align-items:center;gap:10px;flex:none;}
 
 /* O conteúdo usa toda a largura que sobrou. */
 .content{width:100%;max-width:none;margin:0;padding:32px 40px 60px;min-width:0;}
@@ -80,6 +82,6 @@ html,body{overflow-x:visible;}
   .mobile-menu{display:grid;}
   .topbar{padding:14px 18px;min-height:72px;}
   .topbar-title{gap:10px;}
-  .topbar-title h1{font-size:20px;}
+  .page-heading #greeting{font-size:20px;}
   .content{padding:22px 18px 48px;}
 }
