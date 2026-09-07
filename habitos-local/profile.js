@@ -5,30 +5,17 @@
   const COLLAPSED_KEY = 'habitos_sidebar_collapsed';
   const $ = id => document.getElementById(id);
 
-  function greeting(name) {
-    const hour = new Date().getHours();
-    const text = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
-    return `${text}, ${name || 'Usuário'}`;
-  }
-
   function updateGreeting() {
-    const title = $('pageTitle');
-    if (!title) return;
+    const el = $('greeting');
+    if (!el) return;
     let name = 'Usuário';
     try {
       const state = JSON.parse(localStorage.getItem(KEY) || 'null');
       name = state?.user?.name?.trim() || name;
     } catch (e) {}
-    const text = greeting(name);
-    if (title.textContent !== text) title.textContent = text;
-  }
-
-  function watchGreeting() {
-    const title = $('pageTitle');
-    if (!title || title.dataset.greetingWatch) return;
-    title.dataset.greetingWatch = '1';
-    new MutationObserver(updateGreeting).observe(title, { childList: true, characterData: true, subtree: true });
-    updateGreeting();
+    const hour = new Date().getHours();
+    const prefix = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+    el.textContent = `${prefix}, ${name}`;
   }
 
   function setOpen(open) {
@@ -82,7 +69,6 @@
     });
 
     applyLayout();
-    watchGreeting();
   }
 
   function applyLayout() {
@@ -98,7 +84,6 @@
       setOpen(false);
       setCollapsed(localStorage.getItem(COLLAPSED_KEY) === '1');
     }
-    updateGreeting();
   }
 
   function addLogoutButton() {
@@ -130,7 +115,7 @@
   auth.onAuthStateChanged(user => {
     if (!user) return;
     syncLocalName(user);
-    setTimeout(() => { setupLayout(); addLogoutButton(); }, 100);
+    setTimeout(() => { setupLayout(); addLogoutButton(); updateGreeting(); }, 100);
   });
 
   document.addEventListener('click', event => {
@@ -151,6 +136,6 @@
   });
 
   window.addEventListener('resize', applyLayout);
-  window.addEventListener('load', () => setTimeout(() => { setupLayout(); addLogoutButton(); }, 250));
+  window.addEventListener('load', () => setTimeout(() => { setupLayout(); addLogoutButton(); updateGreeting(); }, 250));
   setInterval(updateGreeting, 60000);
 })();
