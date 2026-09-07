@@ -19,7 +19,16 @@
       const state = JSON.parse(localStorage.getItem(KEY) || 'null');
       name = state?.user?.name?.trim() || name;
     } catch (e) {}
-    title.textContent = greeting(name);
+    const text = greeting(name);
+    if (title.textContent !== text) title.textContent = text;
+  }
+
+  function watchGreeting() {
+    const title = $('pageTitle');
+    if (!title || title.dataset.greetingWatch) return;
+    title.dataset.greetingWatch = '1';
+    new MutationObserver(updateGreeting).observe(title, { childList: true, characterData: true, subtree: true });
+    updateGreeting();
   }
 
   function setOpen(open) {
@@ -64,6 +73,7 @@
     }
     if (overlay && !overlay.dataset.ready) {
       overlay.dataset.ready = '1';
+      overlay.dataset.ready = '1';
       overlay.addEventListener('click', () => setOpen(false));
     }
     sidebar.querySelectorAll('.nav-item').forEach(item => {
@@ -73,7 +83,7 @@
     });
 
     applyLayout();
-    updateGreeting();
+    watchGreeting();
   }
 
   function applyLayout() {
