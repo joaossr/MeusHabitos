@@ -73,7 +73,6 @@
     }
     if (overlay && !overlay.dataset.ready) {
       overlay.dataset.ready = '1';
-      overlay.dataset.ready = '1';
       overlay.addEventListener('click', () => setOpen(false));
     }
     sidebar.querySelectorAll('.nav-item').forEach(item => {
