@@ -1,19 +1,18 @@
 (()=>{
   const KEY='habitos_app_v1', SHOP_KEY='habitos_shop_v1';
   const items=[
-    {id:'r1',cost:5,icon:'🛋️',title:'Tempo livre sem culpa',desc:'Reserve um período para descansar e fazer algo que você gosta.'},
-    {id:'r2',cost:10,icon:'🫐',title:'Açaí pequeno',desc:'Uma recompensa rápida para comemorar uma sequência.'},
-    {id:'r3',cost:15,icon:'🍔',title:'Lanche no final de semana',desc:'Hambúrguer, pastel ou outro lanche que você curta.'},
-    {id:'r4',cost:20,icon:'🎉',title:'Sair para fazer algo',desc:'Um passeio ou programa especial no final de semana.'},
-    {id:'r5',cost:30,icon:'🛍️',title:'Comprar algo de até R$30',desc:'Use seus créditos para liberar uma compra pequena.'},
-    {id:'r6',cost:40,icon:'💰',title:'Saída especial',desc:'Uma recompensa maior para uma semana muito boa.'},
-    {id:'r7',cost:60,icon:'🎬',title:'Cinema / filme',desc:'Uma sessão de cinema ou uma noite especial de filme.'},
-    {id:'r8',cost:100,icon:'🎮',title:'Recompensa premium',desc:'Escolha algo especial que você realmente queira fazer.'}
+    {id:'r1',cost:100,icon:'🛋️',title:'Tempo livre sem culpa',desc:'Reserve um período para descansar e fazer algo que você gosta.'},
+    {id:'r2',cost:200,icon:'🫐',title:'Açaí pequeno',desc:'Uma recompensa rápida para comemorar uma sequência.'},
+    {id:'r3',cost:350,icon:'🍔',title:'Lanche no final de semana',desc:'Hambúrguer, pastel ou outro lanche que você curta.'},
+    {id:'r4',cost:500,icon:'🎉',title:'Sair para fazer algo',desc:'Um passeio ou programa especial no final de semana.'},
+    {id:'r5',cost:750,icon:'🛍️',title:'Comprar algo de até R$30',desc:'Use seus créditos para liberar uma compra pequena.'},
+    {id:'r6',cost:1000,icon:'💰',title:'Saída especial',desc:'Uma recompensa maior para uma semana muito boa.'},
+    {id:'r7',cost:1500,icon:'🎬',title:'Cinema / filme',desc:'Uma sessão de cinema ou uma noite especial de filme.'},
+    {id:'r8',cost:2500,icon:'🎮',title:'Recompensa premium',desc:'Escolha algo especial que você realmente queira fazer.'}
   ];
   const getState=()=>{try{return JSON.parse(localStorage.getItem(KEY))||{xpTransactions:[]}}catch(e){return {xpTransactions:[]}}};
   const getShop=()=>{try{return JSON.parse(localStorage.getItem(SHOP_KEY))||{purchases:[]}}catch(e){return {purchases:[]}}};
   const xp=()=>Math.max(0,getState().xpTransactions.reduce((a,x)=>a+(Number(x.xp)||0),0));
-  const money=n=>`${n} XP`;
   function addNav(){
     const nav=document.querySelector('.nav'); if(!nav||nav.querySelector('[data-page="shop"]'))return;
     const b=document.createElement('button'); b.className='nav-item'; b.dataset.page='shop'; b.innerHTML='<span>🛍</span> Loja'; nav.appendChild(b);
