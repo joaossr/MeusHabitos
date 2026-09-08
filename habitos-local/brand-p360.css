@@ -1,0 +1,3 @@
+.brand-mark{background:transparent!important;overflow:hidden!important;display:grid!important;place-items:center!important;}
+.brand-logo-p360{width:100%;height:100%;display:block;object-fit:contain;border-radius:8px;}
+.app-shell.sidebar-collapsed .brand-logo-p360{width:38px;height:38px;}
