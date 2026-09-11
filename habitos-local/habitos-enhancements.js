@@ -96,6 +96,20 @@
   function homeReport(){const s=read(),ds=weekDates(),rows=ds.map(d=>stat(s,d)),sch=rows.reduce((a,x)=>a+x.s,0),dn=rows.reduce((a,x)=>a+x.d,0),pct=sch?Math.round(dn/sch*100):0,max=Math.max(1,...rows.map(x=>x.d));const bars=rows.map((x,i)=>`<div class="mh-week-col"><div class="mh-week-bar" style="height:${Math.max(6,x.d/max*100)}%;background:${colors[i]}"></div><span>${['D','S','T','Q','Q','S','S'][i]}</span><small>${x.d}</small></div>`).join('');return `<div class="section-head mh-home-head"><div><h2>Relatório semanal</h2><span>Seu desempenho desta semana, direto na página inicial.</span></div><button class="btn" id="mhReports">Ver relatório completo</button></div><div class="card mh-home-report"><div class="mh-home-kpis"><div><span>Consistência</span><strong>${pct}%</strong></div><div><span>Concluídos</span><strong>${dn}/${sch}</strong></div><div><span>XP</span><strong>${ds.reduce((a,d)=>a+xp(s,d),0)}</strong></div></div><div class="mh-week-chart">${bars}</div></div>`}
   function injectHome(){const content=document.getElementById('content');if(!content||document.getElementById('mhHomeReport'))return;const anchor=content.querySelector('.dashboard-analytics');const el=document.createElement('div');el.id='mhHomeReport';el.innerHTML=homeReport();(anchor?anchor.parentElement:content).appendChild(el);document.getElementById('mhReports')?.addEventListener('click',()=>document.querySelector('[data-page="reports"]')?.click())}
   function adjustSchedule(){const page=document.querySelector('.nc-page'), grid=document.querySelector('.nc-grid');if(!page||!grid||document.querySelector('.mh-five'))return;const time=document.querySelector('.nc-time-col');if(time){const first=document.createElement('div');first.className='nc-time mh-five';first.textContent='05:00';time.prepend(first)};grid.querySelectorAll('.nc-day-body').forEach(body=>{body.style.height='1296px';body.style.background='repeating-linear-gradient(to bottom,transparent 0,transparent 71px,rgba(36,50,74,.5) 72px)';body.style.paddingTop='72px';body.style.boxSizing='border-box'});grid.querySelectorAll('.nc-event').forEach(e=>{const top=parseFloat(e.style.top||'0');e.style.top=(top+72)+'px'})}
+
+  // Corrige os botões de editar/restaurar/excluir depois que a lista de hábitos
+  // é filtrada. O app.js recria #habitsList via innerHTML, removendo os handlers
+  // que foram registrados pelo bind() inicial. Reaplicamos o bind após a troca.
+  const rebindHabitActions=()=>{
+    if(typeof window.bind==='function') window.bind();
+  };
+  document.addEventListener('input',e=>{
+    if(e.target?.id==='habitSearch') setTimeout(rebindHabitActions,0);
+  });
+  document.addEventListener('change',e=>{
+    if(e.target?.id==='habitFilter') setTimeout(rebindHabitActions,0);
+  });
+
   let last='';const observer=new MutationObserver(()=>{const title=document.getElementById('pageTitle')?.textContent||'';if(title!==last){last=title;if(title==='Hoje')setTimeout(injectHome,0);if(title==='Missões')setTimeout(renderMissionPage,0);if(title==='Cronograma')setTimeout(adjustSchedule,0)}else{if(title==='Hoje'&&!document.getElementById('mhHomeReport'))injectHome();if(title==='Cronograma'&&!document.querySelector('.mh-five'))adjustSchedule()}});observer.observe(document.getElementById('content')||document.body,{childList:true,subtree:true});
   setTimeout(()=>{const title=document.getElementById('pageTitle')?.textContent;if(title==='Hoje')injectHome();if(title==='Missões')renderMissionPage();if(title==='Cronograma')adjustSchedule()},100);
 })();
