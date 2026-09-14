@@ -20,12 +20,27 @@
     document.querySelectorAll('[data-history-close]').forEach(b=>b.onclick=closeModal);
     document.querySelectorAll('.date-habit-check').forEach(input=>input.onchange=()=>input.closest('.date-habit').classList.toggle('checked',input.checked));
     document.querySelector('[data-history-save]')?.addEventListener('click',()=>{
+      const changes=[];
       document.querySelectorAll('.date-habit-check').forEach(input=>{
-        if(isDone(input.dataset.habitId,iso)!==input.checked) setDone(input.dataset.habitId,iso,input.checked);
+        const hid=input.dataset.habitId;
+        if(isDone(hid,iso)!==input.checked) changes.push({hid,done:input.checked});
       });
+      changes.forEach(({hid,done})=>{
+        const h=state.habits.find(x=>x.id===hid);
+        if(!h) return;
+        const key=`${hid}_${iso}`;
+        if(done && !state.completions[key]){
+          state.completions[key]={at:new Date().toISOString(),xp:h.xp};
+          state.xpTransactions.push({id:uid('xp'),date:iso,xp:h.xp,reason:`Hábito: ${h.name}`});
+        }else if(!done && state.completions[key]){
+          state.completions[key]=null;
+          state.xpTransactions.push({id:uid('xp'),date:iso,xp:-h.xp,reason:`Desfazer: ${h.name}`});
+        }
+      });
+      save();
       closeModal();
       render();
-      toast(`Historico de ${formatDate(iso)} atualizado`,'success');
+      toast(changes.length?`Historico de ${formatDate(iso)} atualizado`:'Nenhuma alteracao feita','success');
     });
   }
 
