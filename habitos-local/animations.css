@@ -1,0 +1,38 @@
+/* Microinteracoes e animacoes da interface */
+@media (prefers-reduced-motion:no-preference){
+  .content{animation:pageEnter .32s ease both}
+  .card{animation:cardEnter .35s ease both;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+  .card:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.18)}
+  .habit-row{transition:transform .18s ease,border-color .18s ease,background .18s ease}
+  .habit-row:hover{transform:translateX(3px)}
+  .check{transition:transform .15s ease,background .2s ease}
+  .check:active{transform:scale(.88)}
+  .btn,.ghost-btn,.icon-btn,.nav-item{transition:transform .16s ease,background .18s ease,border-color .18s ease,color .18s ease}
+  .btn:active,.ghost-btn:active{transform:scale(.97)}
+  .progress>div{transition:width .55s cubic-bezier(.22,1,.36,1)}
+  .cal-day-button{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease}
+  .cal-day-button:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 10px 24px rgba(0,0,0,.18)}
+  .modal-backdrop:not(.hidden) .modal{animation:modalEnter .22s ease both}
+  .date-habit{transition:transform .16s ease,border-color .18s ease,background .18s ease}
+  .date-habit:hover{transform:translateX(3px)}
+  @keyframes pageEnter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  @keyframes cardEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes modalEnter{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+}
+.cal-day-button{width:100%;text-align:left;color:var(--text);cursor:pointer;position:relative}
+.cal-edit-hint{display:block;margin-top:6px;font-size:9px;color:var(--muted);opacity:.7}
+.calendar-help{margin:-2px 0 16px;padding:10px 12px;border:1px solid rgba(118,40,216,.25);background:rgba(118,40,216,.08);border-radius:10px;font-size:11px;color:#b9b3d7}
+.date-editor-summary{display:flex;align-items:baseline;gap:8px;padding:12px 14px;margin-bottom:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px}
+.date-editor-summary strong{font-size:22px}.date-editor-summary span{font-size:11px;color:var(--muted)}
+.date-habit-list{display:grid;gap:7px;max-height:48vh;overflow:auto}
+.date-habit{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;cursor:pointer}
+.date-habit.checked{border-color:rgba(118,40,216,.65);background:rgba(118,40,216,.1)}
+.date-habit-check{width:17px;height:17px;accent-color:var(--accent);flex:none}
+.date-habit-icon{width:30px;height:30px;display:grid;place-items:center;background:var(--surface-3);border-radius:8px;flex:none}
+.date-habit-main{display:grid;gap:2px;flex:1;min-width:0}.date-habit-main strong{font-size:12px}.date-habit-main small{font-size:10px;color:var(--muted)}
+.date-habit-xp{font-size:10px;color:#d9d5ff;background:var(--accent-soft);padding:4px 7px;border-radius:99px}
+.calendar-card-history .cal-day-button.today{box-shadow:inset 0 0 0 1px var(--accent)}
+.calendar-card-history .cal-day-button.complete .cal-edit-hint{color:var(--success)}
+.calendar-card-history .cal-day-button.partial .cal-edit-hint{color:var(--warning)}
+.calendar-card-history .cal-day-button.missed .cal-edit-hint{color:var(--danger)}
+@media (prefers-reduced-motion:reduce){.content,.card{animation:none!important}.cal-day-button,.date-habit,.btn,.ghost-btn{transition:none!important}}
